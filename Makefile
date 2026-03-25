@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -g -std=c11 -Wno-incompatible-pointer-types
+CFLAGS = -g -Wall -std=c11 -Wno-incompatible-pointer-types
+CPPFLAGS = $(addprefix -I,$(SOURCE_DIRS))
 LDFLAGS = -lm
 
 BIN=test
@@ -16,10 +17,10 @@ vpath %.c $(SOURCE_DIRS)
 all: $(BIN)
 
 $(BIN): $(notdir $(OBJECTS))
-	$(CC) $(CFLAGS) $(LDFLAGS) $(addprefix, -I, $(SOURCE_DIRS)) $(addprefix $(BUILD_DIR)/, $^) -o $(BIN)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(addprefix $(BUILD_DIR)/, $^) -o $(BIN) $(LDFLAGS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(addprefix, -I, $(SOURCE_DIRS)) -c $< -o $(BUILD_DIR)/$@ 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $(BUILD_DIR)/$@ 
 
 clean:
 	@rm -f $(BUILD_DIR)/*.o $(BIN)
