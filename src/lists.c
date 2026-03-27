@@ -40,7 +40,6 @@ NODE* create_list() {
 	return head;
 }
 
-
 void free_list(NODE* head) {
 	while (head != NULL) {
 		NODE* next = head->next;
@@ -48,7 +47,6 @@ void free_list(NODE* head) {
 		head = next;
 	}
 }
-
 
 void show_list(NODE* head) {
 	while (head != NULL) {
