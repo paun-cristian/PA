@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include "data.h"
 
+
+
 int main(int argc, char *argv[]) {
-	read_data(argc, argv);
+	int test_no = test_num(argv[1]);
+	if (test_no == 0)
+		return 0;
+
+	if (test_no >= 1 && test_no <= 5)
+		read_data(argc, argv);
+
+	if (test_no >= 6 && test_no <= 10)
+		find_opportunity(argc, argv);
 	return 0;
 }
