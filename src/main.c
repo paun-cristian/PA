@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "data.h"
-
-
+#include "tree.h"
 
 int main(int argc, char *argv[]) {
 	int test_no = test_num(argv[1]);
@@ -13,5 +12,9 @@ int main(int argc, char *argv[]) {
 
 	if (test_no >= 6 && test_no <= 10)
 		find_opportunity(argc, argv);
+
+	if (test_no >= 11 && test_no <= 15)
+		create_tree(argc, argv);
+
 	return 0;
 }
