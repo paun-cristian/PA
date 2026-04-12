@@ -1,0 +1,20 @@
+[]
+  [
+, MSFT, AMZN, GOOG, META, TSLA, NVDA, INTC, ORCL, PYPL]
+    [GOOG, META, TSLA, INTC, ORCL, PYPL]
+      [, , , , , ]
+        [, , , ]
+          [, , , ]
+        [, ]
+          [, ]
+    [
+, MSFT, AMZN, NVDA]
+      [MSFT, AMZN, ]
+        [, , ]
+          [, , ]
+      [
+]
+        [
+]
+          [
+]
