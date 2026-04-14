@@ -2,10 +2,10 @@
 
 #define MAX_SYM_LEN 5
 #define MAX_SYMS 10
-#define MAX_ACTIONS 10
 #define MAX_DAYS 10
-#define MAX_BUFFER_SIZE 50
+#define MAX_BUFFER_SIZE 100
 
+#include <stdbool.h>
 /*
 	Move n stocks according to their increase/decrease
 	Create an array to day k value for each action
@@ -19,6 +19,7 @@
 
 typedef struct StockList {
 	char symbol[MAX_SYM_LEN];
+	int sym_id;
 } StockList;
 
 typedef struct TREENODE {
@@ -36,3 +37,6 @@ void insert_values(char buffer[], char movements[], double prev_day[],
 				   double curr_day[], int action_nr, int day);
 void disperse_actions(TREENODE* root, char movements[],
 					  int days, int curr_day, int pos);
+void show_matches(TREENODE* root, FILE* out, const char sequence[MAX_DAYS],
+				  const char sym[MAX_SYM_LEN], bool pairs[MAX_SYMS][MAX_SYMS],
+				  int sym_no, int day, int days);

@@ -1,20 +1,8 @@
-[]
-  [
-, MSFT, AMZN, GOOG, META, TSLA, NVDA, INTC, ORCL, PYPL]
-    [GOOG, META, TSLA, INTC, ORCL, PYPL]
-      [, , , , , ]
-        [, , , ]
-          [, , , ]
-        [, ]
-          [, ]
-    [
-, MSFT, AMZN, NVDA]
-      [MSFT, AMZN, ]
-        [, , ]
-          [, , ]
-      [
-]
-        [
-]
-          [
-]
+AAPL-AMZN
+MSFT-GOOG
+MSFT-INTC
+MSFT-PYPL
+AMZN-META
+AMZN-TSLA
+AMZN-NVDA
+AMZN-ORCL

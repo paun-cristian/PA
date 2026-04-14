@@ -4,17 +4,21 @@
 #include <ctype.h>
 #include "tree.h"
 
+static bool last_pair = false;
+
 TREENODE* create_tree_node() {
-	TREENODE* new = (TREENODE* )malloc(sizeof(TREENODE));
+	TREENODE* new = (TREENODE* )calloc(1, sizeof(TREENODE));
 	if (!new)
 		exit(-1);
 
 	new->left = NULL;
 	new->right = NULL;
 	new->stock_no = 0;
-	new->stocks = (StockList* )malloc(MAX_SYMS * sizeof(StockList));
-	if (!new->stocks)
+	new->stocks = (StockList* )calloc(MAX_SYMS, sizeof(StockList));
+	if (!new->stocks) {
+		free(new);
 		exit(-1);
+	}
 
 	return new;
 }
@@ -46,9 +50,10 @@ void create_tree(int argc, char *argv[]) {
 		exit(-1);
 	}
 	char buffer[MAX_BUFFER_SIZE];
-	char movements[MAX_ACTIONS * MAX_DAYS];
+	char movements[MAX_SYMS * MAX_DAYS] = {0};
 	int action_nr = 0, days = 0;
-	float prev_day[MAX_DAYS], curr_day[MAX_DAYS];
+	double prev_day[MAX_DAYS] = {0};
+	double curr_day[MAX_DAYS] = {0};
 
 	while (fgets(buffer, MAX_BUFFER_SIZE, data_in) != NULL) {
 		if (!isdigit(buffer[0])) {
@@ -60,9 +65,19 @@ void create_tree(int argc, char *argv[]) {
 		}
 	}
 
-	for (int i = 0; i < MAX_SYMS; ++i)
-		disperse_actions(root, movements, days, 0, i);
-	
+	for (int i = 0; i < root->stock_no; ++i)
+		disperse_actions(root, movements, days - 1, 0, i);
+
+	bool pairs[MAX_SYMS][MAX_SYMS] = {false};
+	last_pair = false;
+
+	for (int i = 0; i < root->stock_no; ++i)
+		show_matches(root, data_out, movements + i * MAX_DAYS,
+					 root->stocks[i].symbol,pairs, root->stocks[i].sym_id, 0, days - 1);
+
+	free_tree(root);
+	fclose(data_in);
+	fclose(data_out);
 }
 
 void insert_symbols(char buffer[], TREENODE* root) {
@@ -72,9 +87,13 @@ void insert_symbols(char buffer[], TREENODE* root) {
 
 	int action_nr = 0;
 	while (p) {
-		strcpy(root->stocks[action_nr++].symbol, p);  
+		p[strcspn(p, "\r\n")] = '\0';
+		root->stocks[action_nr].sym_id = action_nr;
+		///printf("%d - %s\n", action_nr, p); -> good
+		strcpy(root->stocks[action_nr++].symbol, p);
 		p = strtok(NULL, ",");
 	}
+	root->stock_no = action_nr;
 }
 
 void insert_values(char buffer[], char movements[], double prev_day[],
@@ -96,11 +115,11 @@ void insert_values(char buffer[], char movements[], double prev_day[],
 		while (p) {
 			prev_day[stock_nr] = curr_day[stock_nr];
 			curr_day[stock_nr] = atof(p);
-			if (curr_day[stock_nr] > prev_day[stock_nr]) { //right
-				movements[stock_nr + (day - 1) * MAX_ACTIONS] = 'r';
+			if (curr_day[stock_nr] >= prev_day[stock_nr]) { //right
+				movements[stock_nr * MAX_DAYS + (day - 1)] = 'r';
 			}
 			else { // left
-				movements[stock_nr + (day - 1) * MAX_ACTIONS] = 'l';
+				movements[stock_nr * MAX_DAYS + (day - 1)] = 'l';
 			}
 			stock_nr++;
 			p = strtok(NULL, ",");
@@ -111,44 +130,77 @@ void insert_values(char buffer[], char movements[], double prev_day[],
 // building the tree
 void disperse_actions(TREENODE* root, char movements[],
 					  int days, int curr_day, int pos) {
-	if (curr_day >= days - 1)
+	if (curr_day >= days)
+		return;
+
+	if (root->stocks[pos].symbol[0] == '\0')
 		return;
 	
-	if (movements[curr_day * MAX_ACTIONS + pos] == 'r') {
+	if (movements[pos * MAX_DAYS + curr_day] == 'r') {
 		if (root->right == NULL)
 			root->right = create_tree_node();
-		int curr_node_stock_no = root->right->stock_no++;
+		int curr_node_stock_no = root->stocks[pos].sym_id;
 
+		if (root->right->stocks[curr_node_stock_no].symbol[0] == '\0')
+			root->right->stock_no++;
 		strcpy(root->right->stocks[curr_node_stock_no].symbol,
 			   root->stocks[pos].symbol);
+		root->right->stocks[curr_node_stock_no].sym_id = root->stocks[pos].sym_id;
 		disperse_actions(root->right, movements, days,
 						 curr_day + 1, pos);
 	}
 	else {
 		if (root->left == NULL)
 			root->left = create_tree_node();
-		int curr_node_stock_no = root->left->stock_no++;
+		int curr_node_stock_no = root->stocks[pos].sym_id;
 
+		if (root->left->stocks[curr_node_stock_no].symbol[0] == '\0')
+			root->left->stock_no++;
 		strcpy(root->left->stocks[curr_node_stock_no].symbol,
 			   root->stocks[pos].symbol);
+		root->left->stocks[curr_node_stock_no].sym_id = root->stocks[pos].sym_id;
 		disperse_actions(root->left, movements, days,
 						 curr_day + 1, pos);
 	}
 }
-// int day_count = 0;
 
-// for (int i = 0; i < days; ++i) {
-// 	if (i % MAX_ACTIONS == 0)
-// 		day_count++;
-
-// 	if (movements[MAX_ACTIONS * day_count + i] == 'r')
-// 		root->
-// }
-
-void show_matches(TREENODE* root) {
-	if (!root->left || !root->right)
+//go with the given sequence, if it s not null ok, if it is GG
+void show_matches(TREENODE* root, FILE* out, const char sequence[MAX_DAYS],
+				  const char sym[MAX_SYM_LEN], bool pairs[MAX_SYMS][MAX_SYMS],
+				  int sym_no, int day, int days) {
+	if (root == NULL)
 		return;
 
-	
+	if (day == days) {
+		for (int i = 0; i < MAX_SYMS; ++i) {
+			if (root->stocks[i].symbol[0] == '\0')
+				continue;
+
+			int curr_stock_id = root->stocks[i].sym_id;
+			if (pairs[sym_no][curr_stock_id] == false) {
+				if (last_pair)
+					fprintf(out, "\n");
+				fprintf(out, "%s-%s", sym, root->stocks[i].symbol);
+				last_pair = true;
+				pairs[curr_stock_id][sym_no] = pairs[sym_no][curr_stock_id] = true;
+			}
+		}
+		return;
+	}
+
+	if (sequence[day] == 'l')
+		show_matches(root->right, out, sequence, sym, pairs, sym_no, day + 1, days);
+	else
+		show_matches(root->left, out, sequence, sym, pairs, sym_no, day + 1, days);
 }
-void free_tree(TREENODE* root);
+
+void free_tree(TREENODE* root) {
+	if (root == NULL)
+		return;
+
+	free_tree(root->right);
+	TREENODE* left = root->left;
+	free(root->stocks);
+	free(root);
+	free_tree(left);
+}
