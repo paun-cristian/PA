@@ -4,7 +4,7 @@ CPPFLAGS = $(addprefix -I,$(SOURCE_DIRS))
 LDFLAGS = -lm
 
 BIN=test
-PACKAGE = <numele_vostru>.zip
+PACKAGE = PAUN_CRISTIAN_ALIN_313AA.zip
 
 BUILD_DIR = ./bin
 SOURCE_DIR = ./src

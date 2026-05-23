@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
 	if (test_no >= 11 && test_no <= 15)
 		create_tree(argc, argv);
 
-	// if (test_no >= 16 && test_no <= 20)
-	// 	create_markov_graph(argc, argv);
+	if (test_no >= 16 && test_no <= 20)
+		create_markov_graph(argc, argv);
 
 	return 0;
 }
