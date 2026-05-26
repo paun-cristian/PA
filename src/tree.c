@@ -6,6 +6,7 @@
 
 static bool last_pair = false;
 
+// Initializeaza si returneaza un nod nou in arbore
 TREENODE* create_tree_node() {
 	TREENODE* new = (TREENODE* )calloc(1, sizeof(TREENODE));
 	if (!new)
@@ -32,6 +33,7 @@ so first 10 chars will be for day 1
 next 10 for day 2
 and so on
 */
+// Parseaza inputul si construieste arborele cu actiuni
 void create_tree(int argc, const char* argv[]) {
 	TREENODE* root = create_tree_node();
 
@@ -80,6 +82,7 @@ void create_tree(int argc, const char* argv[]) {
 	fclose(data_out);
 }
 
+// Citeste si salveaza simbolurile actiunilor in radacina
 void insert_symbols(char buffer[], TREENODE* root) {
 	char *p = strtok(buffer, ",");
 	if (!p)
@@ -96,6 +99,7 @@ void insert_symbols(char buffer[], TREENODE* root) {
 	root->stock_no = action_nr;
 }
 
+// Parcurge valorile zilnice si populeaza miscarile (left/right)
 void insert_values(char buffer[], char movements[], double prev_day[],
 				   double curr_day[], int action_nr, int day) {
 
@@ -128,6 +132,7 @@ void insert_values(char buffer[], char movements[], double prev_day[],
 }
 
 // building the tree
+// Plaseaza actiunile in nodurile corecte din arbore
 void disperse_actions(TREENODE* root, char movements[],
 					  int days, int curr_day, int pos) {
 	if (curr_day >= days)
@@ -165,6 +170,7 @@ void disperse_actions(TREENODE* root, char movements[],
 }
 
 //go with the given sequence, if it s not null ok, if it is GG
+// Cauta si afiseaza perechile de actiuni cu aceeasi evolutie
 void show_matches(TREENODE* root, FILE* out, const char sequence[MAX_DAYS],
 				  const char sym[MAX_SYM_LEN], bool pairs[MAX_SYMS][MAX_SYMS],
 				  int sym_no, int day, int days) {

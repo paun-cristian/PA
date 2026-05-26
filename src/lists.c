@@ -5,7 +5,7 @@
 #include "lists.h"
 #include "data.h"
 
-
+// Aloca si initializeaza un nod de lista simpla
 NODE* create_node() {
 	NODE* new = (NODE* )malloc(sizeof(NODE));
 	if (new == NULL)
@@ -59,7 +59,7 @@ void free_list(NODE* head) {
 	}
 }
 
-
+// Aloca nod pentru oras si pointer catre stack-ul de valori
 CITY_NODE* create_city_node() {
 	CITY_NODE* new = (CITY_NODE* )malloc(sizeof(CITY_NODE));
 	if (new == NULL)
@@ -82,6 +82,7 @@ names of the cities, and each stack top being the node
 pointed at bu the CITY_NODE.
 */
 
+// Adauga o valoare in topul stivei asociate orasului
 void push(CITY_NODE* top_city, double value) {
 	NODE* new = create_node();
 	new->valoare = value;

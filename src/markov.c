@@ -47,6 +47,7 @@ static Fraction mul_fractions(Fraction a, Fraction b) {
 	return simplify(res);
 }
 
+// Creeaza o matrice de adiacenta pentru graful Markov
 MARKOV_MATRIX* create_markov_matrix(size_t element_count) {
 	MARKOV_MATRIX* matrix = (MARKOV_MATRIX* )calloc(element_count, sizeof(MARKOV_MATRIX));
 	if (!matrix)
@@ -63,7 +64,7 @@ MARKOV_MATRIX* create_markov_matrix(size_t element_count) {
 	return matrix;
 }
 
-// compress array indexes
+// Calculeaza sau preia id-ul asociat unui nod
 static int get_mapped_id(int raw_node, int* mapping, int* mapped_count) {
 	for (int i = 0; i < *mapped_count; i++) {
 		if (mapping[i] == raw_node) {
@@ -74,6 +75,7 @@ static int get_mapped_id(int raw_node, int* mapping, int* mapped_count) {
 	return (*mapped_count)++;
 }
 
+// Construieste graful si simuleaza tranzitiile probabilitatilor
 void create_markov_graph(int argc, const char* argv[]) {
 	if (argc < 3) exit(-1);
 	

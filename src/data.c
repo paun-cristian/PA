@@ -6,7 +6,7 @@
 
 int N = 1;
 
-
+// Citeste datele si initializeaza lista de valori
 void read_data(int argc, const char *argv[]) {
 	if (argc < 3)
 		exit(-1);
@@ -46,11 +46,13 @@ void read_data(int argc, const char *argv[]) {
 	fclose(data_out);
 }
 
+// Calculeaza randamentul dintre doua zile consecutive
 double calculare_randament(const NODE* node_k, const NODE* node_kminus) {
 	double randament = (node_k->valoare - node_kminus->valoare) / node_kminus->valoare;
 	return randament;
 }
 
+// Populeaza campul de randament pentru fiecare nod
 void compute_randament(NODE* head) {
 	if (!head || !head->next)
 		return;
@@ -61,6 +63,7 @@ void compute_randament(NODE* head) {
 
 }
 
+// Calculeaza media randamentelor din lista
 double compute_average(NODE *head) {
 	if (!head || !head->next)
 		exit(-1);
@@ -73,6 +76,7 @@ double compute_average(NODE *head) {
 	return sum;
 }
 
+// Calculeaza volatilitatea pe baza mediei
 double compute_volatility(NODE *head, double average) {
 	if (!head || !head->next)
 		exit(-1);
@@ -86,6 +90,7 @@ double compute_volatility(NODE *head, double average) {
 	return volatility;
 }
 
+// Afiseaza media, volatilitatea si indicele Sharpe
 void print_stats(NODE* head, FILE *data_out) {
 	double average = compute_average(head);
 	double volatility = compute_volatility(head, average);
@@ -99,6 +104,7 @@ void print_stats(NODE* head, FILE *data_out) {
 	fprintf(data_out, "%.3f\n", sharpe_ratio);
 }
 
+// Cauta si afiseaza oportunitatea dintre orase care nu au evolutie similara
 void find_opportunity(int argc, const char *argv[]) {
 	if (argc < 3)
 		exit(-1);
@@ -141,6 +147,7 @@ void find_opportunity(int argc, const char *argv[]) {
 	free_cities(cities);
 }
 
+// Creeaza si populeaza stivele de preturi pentru fiecare oras
 CITY_NODE** process_cities(FILE* data_in) {
 	char *buffer = (char* )malloc(MAX_CITY_LEN * sizeof(char));
 	if (buffer == NULL)
@@ -173,6 +180,7 @@ CITY_NODE** process_cities(FILE* data_in) {
 	return cities;
 }
 
+// Gaseste si returneaza marimea minima a stivelor de preturi
 int min_city_height(CITY_NODE** cities) {
 	int minimum_height = stack_height(cities[0]->next);
 	for (int i = 1; i < NR_CITIES; ++i) {
